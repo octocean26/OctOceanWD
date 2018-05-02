@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2043
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WD.WebSite", "WD.WebSite\WD.WebSite.csproj", "{E9912021-703F-45A0-A0DF-767689321659}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WD.Management.WebSite", "WD.Management.WebSite\WD.Management.WebSite.csproj", "{CAEA0374-92DD-4F9A-9012-848934E9F003}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WD.WebAPI", "WD.WebAPI\WD.WebAPI.csproj", "{A69D8E06-6680-48AD-B702-D43ED746308D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WD.Entity", "WD.Entity\WD.Entity.csproj", "{852236D6-0CF2-4219-A2F9-77710B42D36C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WD.DataService", "WD.DataService\WD.DataService.csproj", "{A1D28F62-8514-4995-ABAA-64AE5FEB026F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OctOcean.Com", "OctOcean.Com\OctOcean.Com.csproj", "{83CFBBCF-1C87-45F7-9FBA-0A12205DD3B4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E9912021-703F-45A0-A0DF-767689321659}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9912021-703F-45A0-A0DF-767689321659}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9912021-703F-45A0-A0DF-767689321659}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9912021-703F-45A0-A0DF-767689321659}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAEA0374-92DD-4F9A-9012-848934E9F003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAEA0374-92DD-4F9A-9012-848934E9F003}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAEA0374-92DD-4F9A-9012-848934E9F003}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAEA0374-92DD-4F9A-9012-848934E9F003}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A69D8E06-6680-48AD-B702-D43ED746308D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A69D8E06-6680-48AD-B702-D43ED746308D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A69D8E06-6680-48AD-B702-D43ED746308D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A69D8E06-6680-48AD-B702-D43ED746308D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{852236D6-0CF2-4219-A2F9-77710B42D36C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{852236D6-0CF2-4219-A2F9-77710B42D36C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{852236D6-0CF2-4219-A2F9-77710B42D36C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{852236D6-0CF2-4219-A2F9-77710B42D36C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1D28F62-8514-4995-ABAA-64AE5FEB026F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1D28F62-8514-4995-ABAA-64AE5FEB026F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1D28F62-8514-4995-ABAA-64AE5FEB026F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1D28F62-8514-4995-ABAA-64AE5FEB026F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83CFBBCF-1C87-45F7-9FBA-0A12205DD3B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83CFBBCF-1C87-45F7-9FBA-0A12205DD3B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83CFBBCF-1C87-45F7-9FBA-0A12205DD3B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83CFBBCF-1C87-45F7-9FBA-0A12205DD3B4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A7827CF0-F6B2-4475-BEDE-0023BFA7030F}
+	EndGlobalSection
+EndGlobal
