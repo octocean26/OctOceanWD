@@ -4,4 +4,14 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OctOcean.Com\OctOcean.Com.csproj" />
+    <ProjectReference Include="..\WD.Entity\WD.Entity.csproj" />
+  </ItemGroup>
+
 </Project>
