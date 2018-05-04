@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace WD.Entity.Sub
+namespace WD.Entity.Frp
 {
     public class Pub_AccessRecord_Entity
     {
