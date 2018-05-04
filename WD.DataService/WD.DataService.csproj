@@ -15,8 +15,4 @@
     <ProjectReference Include="..\WD.Utils\WD.Utils.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Frp\" />
-  </ItemGroup>
-
 </Project>
