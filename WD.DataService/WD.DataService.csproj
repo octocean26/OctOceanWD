@@ -12,6 +12,11 @@
   <ItemGroup>
     <ProjectReference Include="..\OctOcean.Com\OctOcean.Com.csproj" />
     <ProjectReference Include="..\WD.Entity\WD.Entity.csproj" />
+    <ProjectReference Include="..\WD.Utils\WD.Utils.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Frp\" />
   </ItemGroup>
 
 </Project>
