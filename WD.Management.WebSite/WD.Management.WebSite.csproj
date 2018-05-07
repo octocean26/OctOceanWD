@@ -14,13 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\css\" />
-    <Folder Include="wwwroot\images\" />
-    <Folder Include="wwwroot\js\" />
-    <Folder Include="wwwroot\lib\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\OctOcean.Com\OctOcean.Com.csproj" />
     <ProjectReference Include="..\WD.DataService\WD.DataService.csproj" />
     <ProjectReference Include="..\WD.Entity\WD.Entity.csproj" />
