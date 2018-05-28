@@ -1,0 +1,41 @@
+﻿
+@{
+    ViewData["Title"] = "编辑文章类别";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model VM_ArticleCategory
+
+<h2>编辑文章类别</h2>
+<div style="padding:10px 0;">
+    @*<div asp-validation-summary="All"></div>*@
+    @*默认情况下，Razor 页面只绑定带有非 GET 谓词的属性*@
+    <form method="post" class="layui-form layui-form-pane" asp-action="Edit">
+        <input type="hidden" asp-for="Id"/>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">分类编码:</label>
+            <div class="layui-input-block">
+                
+                <input   asp-for="ArticleCategoryCode" type="text" maxlength="10" required lay-verify="required" placeholder="请输入分类编码" autocomplete="off" class="layui-input">
+
+                @*<input asp-for="ArticleCategoryEntity.ArticleCategoryCode"/>*@
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">分类名称:</label>
+            <div class="layui-input-block">
+                <input asp-for="ArticleCategoryName" type="text" maxlength="10" required lay-verify="required" placeholder="请输入文章分类" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-green" type="submit"><i class="layui-icon">&#xe609;</i>保存</button>
+                <input type="reset" class="layui-btn layui-btn-primary" value="重置" />
+            </div>
+        </div>
+
+
+    </form>
+</div>
+
