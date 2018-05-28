@@ -7,12 +7,12 @@ using WD.Entity.Sub;
 
 namespace WD.DataService.Sub
 {
-    public class Base_ArticleTag_Dal
+    public class Base_ArticleTag_DataService
     {
         IDbConnection connection = null;
-        public Base_ArticleTag_Dal()
+        public Base_ArticleTag_DataService(Utils.OctOceanConfig octOceanConfig)
         {
-            this.connection = new SqlConnection(Utils.OctOceanGlobal.Config.DefaultConnectionString);
+            this.connection = new SqlConnection(octOceanConfig.DefaultConnectionString);
         }
 
         public int InsertArticleTag(Base_ArticleTag_Entity entity)

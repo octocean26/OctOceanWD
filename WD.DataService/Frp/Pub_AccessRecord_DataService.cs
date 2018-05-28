@@ -5,15 +5,16 @@ using System.Data.SqlClient;
 using System.Text;
 using Dapper;
 using WD.Entity.Frp;
+using WD.Utils;
 
 namespace WD.DataService.Frp
 {
-    public class Pub_AccessRecord_Dal
+    public class Pub_AccessRecord_DataService
     {
         IDbConnection connection = null;
-        public Pub_AccessRecord_Dal()
+        public Pub_AccessRecord_DataService(OctOceanConfig octOceanConfig)
         {
-            this.connection = new SqlConnection(Utils.OctOceanGlobal.Config.DefaultConnectionString);
+            this.connection = new SqlConnection(octOceanConfig.DefaultConnectionString);
         }
         public void InsertAccessRecord(Pub_AccessRecord_Entity arEntity, Pub_ArticleBrowseLog_Entity ablEntity)
         {

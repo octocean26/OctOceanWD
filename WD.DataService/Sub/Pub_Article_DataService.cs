@@ -7,15 +7,16 @@ using Dapper;
 using OctOcean.Com.Helper;
 using WD.Entity.Aid;
 using WD.Entity.Sub;
+using WD.Utils;
 
 namespace WD.DataService.Sub
 {
-    public class Pub_Article_Dal
+    public class Pub_Article_DataService
     {
         IDbConnection connection = null;
-        public Pub_Article_Dal()
+        public Pub_Article_DataService(OctOceanConfig octOceanConfig)
         {
-            this.connection = new SqlConnection(Utils.OctOceanGlobal.Config.DefaultConnectionString);
+            this.connection = new SqlConnection(octOceanConfig.DefaultConnectionString);
         }
 
         /// <summary>

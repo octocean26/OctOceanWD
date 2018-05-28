@@ -1,0 +1,344 @@
+﻿
+@{
+    ViewData["Title"] = "Upload";
+    Layout = "~/Views/Shared/_EmptyLayout.cshtml";
+}
+@section CustomHeadScript{
+    <script src="~/lib/webUploader/webuploader.min.js"></script>
+}
+
+@section CustomHeadStyle{
+    <link href="~/lib/webUploader/webuploader.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
+    <style>
+        ul, li, p {
+            margin-bottom: 0;
+        }
+
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .dndbody {
+            border: 2px solid #808080;
+            padding: 10px;
+            min-height: 400px;
+        }
+
+        .uf-filelist li {
+            list-style: none;
+            border-top: 1px dashed #73c9e3;
+            padding: 0px 10px;
+        }
+
+        .uf-filelist h5 {
+            float: left;
+            font-size: 14px;
+            width: 40%;
+            font-weight: normal;
+            word-wrap: break-word;
+            color: #1588aa;
+            line-height: 35px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .uf-filelist .fn_name {
+            text-decoration: underline;
+        }
+
+            .uf-filelist .fn_name:hover {
+                cursor: pointer;
+            }
+
+        .singfilemsg {
+            float: left;
+            font-size: 14px;
+            height: 35px;
+            width: 60%;
+        }
+
+            .singfilemsg p {
+                color: #adaaaa;
+                line-height: 35px;
+            }
+
+            .singfilemsg .progress {
+                margin-top: 8px;
+                margin-bottom: 0;
+            }
+
+            .singfilemsg span {
+                color: #5cb85c;
+                line-height: 35px;
+            }
+
+            .singfilemsg i {
+                font-weight: 600;
+                margin-left: 20px;
+                line-height: 35px;
+            }
+    </style>
+
+}
+
+<div class="dndbody">
+
+    <div>
+        <div class="float-left" style="width:30%; text-align:center;">
+            <div id="btnSelectFile">选择文件</div>
+            <div style="border:1px solid #73c9e3; width:100%; height:250px;">
+                <img src="~/images/zwtp.gif" width="100%" id="imgshow" />
+            </div>
+
+        </div>
+        <div class="float-right" style="width:69%; border:1px solid #73c9e3;">
+            <p style="text-align:center;height:40px; background-color:#73c9e3; font-size:16px; color:#fff; line-height:40px;">文件列表</p>
+            <ul class="uf-filelist" id="filelist">
+                @*<li>
+                        <h5 id="fn_1">文件名称：</h5>
+                        <div class="singfilemsg" id="sfmsg_">
+
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-success  progress-bar-striped active" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
+                                    <span class="sr-only">60% Complete</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </li>
+
+                    <li>
+                        <h5 id="fn_">文件名称：</h5>
+                        <div class="singfilemsg" id="sfmsg_">
+                            <p>准备上传....</p>
+                        </div>
+                        <div class="clear"></div>
+                    </li>*@
+            </ul>
+
+        </div>
+        <div class="float-clear"></div>
+    </div>
+    <input type="hidden" id="hfSubmitImageFile" />
+
+
+
+
+    <script>
+
+        function sethfImgValue(val,s) {
+
+            var ov = $('#hfSubmitImageFile').val();
+            var arr = ov ? ov.split(':') : [];
+            var _index = $.inArray(val, arr);
+
+            //选中操作
+            if (s) {
+                //如果不存在
+                if (_index== -1) {
+                    arr.push(val);
+                }
+            }
+            //取消选中
+            else {
+                if (_index >= 0) {
+                    arr.splice(_index, 1);
+                }
+            }
+            $('#hfSubmitImageFile').val(arr.sort().join(':'));
+            //console.log($('#hfSubmitImageFile').val());
+        }
+
+        //根据传入的类型决定可以选择的文件,默认为null
+        @*var _accept = '@Model.Accept_MimeTypes'? {
+            title: '@Html.Raw( Model.Accept_Title)',
+            extensions: '@Model.Accept_Extensions',
+            mimeTypes:  '@Model.Accept_MimeTypes'}:null;*@
+        //eg: {
+        //    title: 'Images',
+        //        extensions: 'gif,jpg,jpeg,bmp,png',
+        //            mimeTypes: 'image/*'
+        //}
+         //初始化Web Uploader
+        var uploader = WebUploader.create({
+            pick: {
+                id: '#btnSelectFile',
+                innerHTML: '点击选择文件',
+                multiple: true //是否允许多选
+            },
+
+            auto: true,// 选完文件后，是否自动上传。
+
+            swf: '~/lib/webUploader/js/Uploader.swf', // swf文件路径
+
+            server: '/ArticleImage/Send/@ViewBag.ArticleKey', // 文件接收服务端。
+
+            resize: false, // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+
+            accept: { title: 'Images', extensions: 'gif,jpg,jpeg,bmp,png', mimeTypes:'image/*'}, //允许上传的文件类型
+
+
+            chunked: false,//new Boolean( Model.Chunked),// 是否开起分片上传。
+            chunkSize: 10 * 1024 * 1024, //每个分片大小，指定为10M
+            threads: 5, //上传并发数，默认是3
+
+            dnd: document.body,//指定Drag And Drop拖拽的容器，如果不指定，则不启动
+            disableGlobalDnd: true, //是否禁掉整个页面的拖拽功能，如果不禁用，图片拖进来的时候会默认被浏览器打开。
+            paste: document.body, //指定监听paste事件的容器，如果不指定，不启用此功能。此功能为通过粘贴来添加截屏的图片。建议设置为document.body.
+
+            compress: false, //上传前不压缩图片
+
+            prepareNextFile: true,//是否允许在文件传输时提前把下一个文件准备好
+
+            @*formData: {
+                articlekey:'@Model.ArticleKey'
+            },*@ //文件上传请求的参数表，每次发送都会发送此对象中的参数，注意：该处是所有文件的公共参数，不同文件的参数必须在事件中设定
+
+            fileVal: 'file',//[默认值：'file'] 设置文件上传域的name。
+
+            method: 'POST',//文件上传方式，POST或者GET
+
+           // fileNumLimit: 100,//验证文件总数量, 超出则不允许加入队列
+
+           // fileSizeLimit: 5000, //验证文件总大小是否超出限制, 超出则不允许加入队列
+            //fileSingleSizeLimit: 1 * 1024 * 1024, //验证单个文件大小是否超出限制, 超出则不允许加入队列
+
+            duplicate: true //去重， 根据文件名字、文件大小和最后修改时间来生成hash Key.
+        });
+
+
+
+
+        //当每个文件被加入队列之前触发，有多少个文件就触发多少次，此事件的handler返回值为false，则此文件不会被添加进入队列
+        uploader.on('beforeFileQueued', function (file) {
+            file.guid = WebUploader.Base.guid();//每个文件绑定一个独立的Guid
+           // console.log(file);
+        });
+
+
+        var $list = $('#filelist');
+
+
+         // 当有文件被添加进队列的时候，有几个文件就触发几次
+        uploader.on('fileQueued', function (file) {
+            $list.append(
+                '<li><h5 id="fn_' + file.id + '">' + file.name + '</h5><div class="singfilemsg" id="sfmsg_' + file.id + '"><p>准备上传....</p></div><div class="clear"></div></li>');
+        });
+
+
+        //文件分块上传前触发，加参数，无论是否启用分块，都会执行
+        uploader.on('uploadBeforeSend', function (object, data, headers) {
+
+            //console.log(object);
+            //console.log('uploadBeforeSend:'+object.file.guid);
+
+           data.guid = object.file.guid;//获取该文件独立的Guid，并发送到后台
+        });
+
+
+
+
+        // 文件上传过程中创建进度条实时显示。
+        uploader.on('uploadProgress', function (file, percentage) {
+
+            var $msgpanel = $('#sfmsg_' + file.id);
+            var progresspanel = $('#progress_' + file.id);
+            var protxt = percentage * 100 + '%';
+            if (progresspanel.length) {
+                progresspanel.css('width', protxt).children('span').text(protxt);
+            }
+            else {
+
+                $msgpanel.empty().append('<div class="progress"><div id= "progress_' + file.id + '" class="progress-bar progress-bar-success progress-bar-striped active" role= "progressbar" aria- valuemin="0" aria- valuemax="100" style= "width:'
+                    + protxt + '" ><span>' + protxt + '</span></div></div>');
+            }
+        });
+
+           //文件上传成功
+        uploader.on('uploadSuccess', function (file, response) {
+            var $sfmsgpanel = $('#sfmsg_' + file.id);
+            $sfmsgpanel.attr('data-img', response.fileName).attr('data-checked', 'checked');
+            sethfImgValue(response.fileName, true);
+
+            $sfmsgpanel.empty().append('<span>上传成功</span>')
+                .append($('<i data-checked="checked" class="layui-icon">&#xe627;</i>')
+                .click(function () {
+                    if ($(this).attr('data-checked')) {
+                        $(this).html('&#xe626;').removeAttr('data-checked');
+                        $(this).parent().removeAttr('data-checked');
+                        sethfImgValue($(this).parent().attr('data-img'), false);
+                    }
+                    else {
+                        $(this).html('&#xe627;').attr('data-checked', 'checked');
+                        $(this).parent().attr('data-checked', 'checked');
+                        sethfImgValue($(this).parent().attr('data-img'), true);
+
+
+                    }
+
+
+             }));
+            $('#fn_' + file.id).addClass('fn_name').click(function () {
+                if (response.status == 1) {
+
+                    $('#imgshow').attr('src', response.msg);
+                }
+                else {
+                    alert('图片无效！');
+                }
+
+                console.log(response);
+
+             });
+
+        });
+
+
+
+
+        ////当一批文件添加进队列以后触发。
+        //uploader.on('filesQueued', function (file) {
+
+        //});
+
+
+        //// 文件上传过程中创建进度条实时显示。
+        //uploader.on('uploadProgress', function (file, percentage) {
+        //    var $li = $('#' + file.id),
+        //        $percent = $li.find('.progress .progress-bar');
+
+        //    // 避免重复创建
+        //    if (!$percent.length) {
+        //        $percent = $('<div class="progress progress-striped active">' +
+        //            '<div class="progress-bar" role="progressbar" style="width: 0%">' +
+        //            '</div>' +
+        //            '</div>').appendTo($li).find('.progress-bar');
+        //    }
+
+        //    $li.find('p.state').text('上传中');
+
+        //    $percent.css('width', percentage * 100 + '%');
+        //});
+
+        ////文件上传成功
+        //uploader.on('uploadSuccess', function (file) {
+        //    $('#' + file.id).find('p.state').text('已上传');
+        //});
+        ////文件上传失败
+        //uploader.on('uploadError', function (file) {
+        //    $('#' + file.id).find('p.state').text('上传出错');
+        //});
+        ////文件上传完后，无论成功失败都会触发
+        //uploader.on('uploadComplete', function (file) {
+        //    $('#' + file.id).find('.progress').fadeOut();
+        //});
+
+
+
+
+
+    </script>
+</div>

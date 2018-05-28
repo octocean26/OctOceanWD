@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WD.DataService;
 using WD.DataService.Sub;
 using WD.Entity.Sub;
 using WD.Utils;
@@ -12,10 +13,18 @@ using WD.Utils;
 namespace WD.Management.WebSite.Controllers
 {
     [Route("ArticleImage")] //所有的访问都得加上该前缀
-    public class ArticleImageController : Controller
+    public class ArticleImageController : BaseController
     {
 
-         Pri_ArticleImage_Dal imgdal = new  Pri_ArticleImage_Dal();
+        private readonly Pri_ArticleImage_DataService imgdal = null;
+        readonly PubComService _pubComService = null;
+        public ArticleImageController(PubComService pubComService)
+        {
+            _pubComService = pubComService;
+            imgdal = pubComService._Pri_ArticleImage_DataService;
+        }
+
+         
         [Route("Upload/{ArticleKey}")]
         public IActionResult Upload(string ArticleKey) //在文章编辑页面，点击上传时调用，可以同时上传多个图片文件
         {
@@ -30,12 +39,12 @@ namespace WD.Management.WebSite.Controllers
         public async Task<IActionResult> SendSmallFile(string ArticleKey) //同时上传多个文件时被调用
         {
             var requestForm = HttpContext.Request.Form;
-            string imageurl = Utils.OctOceanGlobal.Config.UrlRoot_Cache_Image + "/" + ArticleKey;
+            string imageurl = _pubComService._OctOceanConfig.UrlRoot_Cache_Image + "/" + ArticleKey;
             string fileName = string.Empty;
 
             if (requestForm != null)
             {
-                string imageCacheDir = Path.Combine(Utils.OctOceanGlobal.Config.FileRoot_Cache_Image, ArticleKey);
+                string imageCacheDir = Path.Combine(_pubComService._OctOceanConfig.FileRoot_Cache_Image, ArticleKey);
 
                 if (!Directory.Exists(imageCacheDir)) { Directory.CreateDirectory(imageCacheDir); };
 
@@ -111,7 +120,7 @@ namespace WD.Management.WebSite.Controllers
                     }
                     else
                     {
-                        string imageCacheDir = Path.Combine(Utils.OctOceanGlobal.Config.FileRoot_Cache_Image, entity.ArticleKey);
+                        string imageCacheDir = Path.Combine(_pubComService._OctOceanConfig.FileRoot_Cache_Image, entity.ArticleKey);
                         if (!Directory.Exists(imageCacheDir)) { Directory.CreateDirectory(imageCacheDir); };
                         var formFile = files[0];
 
@@ -123,7 +132,7 @@ namespace WD.Management.WebSite.Controllers
                         {
                             await formFile.CopyToAsync(stream);
                             _status = 1;
-                            _msg = Utils.OctOceanGlobal.Config.UrlRoot_Cache_Image + "/" + entity.ArticleKey + "/" + imgname;
+                            _msg = _pubComService._OctOceanConfig.UrlRoot_Cache_Image + "/" + entity.ArticleKey + "/" + imgname;
 
                         }
 
@@ -156,10 +165,10 @@ namespace WD.Management.WebSite.Controllers
             List<string> noErrorImg = new List<string>();
             int status = 1;
             string msg = "";
-            string article_cachefile_root = Path.Combine(Utils.OctOceanGlobal.Config.FileRoot_Cache_Image, ArticleKey);
+            string article_cachefile_root = Path.Combine(_pubComService._OctOceanConfig.FileRoot_Cache_Image, ArticleKey);
 
             //判断目标路径是否存在
-            string article_sysfile_root = Path.Combine(Utils.OctOceanGlobal.Config.FileRoot_Web_Image, ArticleKey);
+            string article_sysfile_root = Path.Combine(_pubComService._OctOceanConfig.FileRoot_Web_Image, ArticleKey);
             if (!Directory.Exists(article_sysfile_root)) { Directory.CreateDirectory(article_sysfile_root); };
 
 
@@ -182,7 +191,7 @@ namespace WD.Management.WebSite.Controllers
                             Width = 0,
                             ImgName = fn,
                             ImgKey = Path.GetFileNameWithoutExtension(fn),
-                            Src = $"{Utils.OctOceanGlobal.Config.UrlRoot_Web_Image}/{ArticleKey}/{fn}",
+                            Src = $"{_pubComService._OctOceanConfig.UrlRoot_Web_Image}/{ArticleKey}/{fn}",
                             UpdateTime = DateTime.Now
                         });
 
@@ -223,14 +232,14 @@ namespace WD.Management.WebSite.Controllers
             //判断是否重新上传过新的文件
             if (!string.IsNullOrWhiteSpace(NewImgSrc))
             {
-                string fullname = Path.Combine(Utils.OctOceanGlobal.Config.FileRoot_Cache_Image, entity.ArticleKey, img_Entity.ImgName);
-                string newfullname = Path.Combine(Utils.OctOceanGlobal.Config.FileRoot_Web_Image, entity.ArticleKey, img_Entity.ImgName);
+                string fullname = Path.Combine(_pubComService._OctOceanConfig.FileRoot_Cache_Image, entity.ArticleKey, img_Entity.ImgName);
+                string newfullname = Path.Combine(_pubComService._OctOceanConfig.FileRoot_Web_Image, entity.ArticleKey, img_Entity.ImgName);
                 //直接复制
                 System.IO.File.Copy(fullname, newfullname, true);
 
                 //修改旧的图片实体的信息
                 entity.ImgName = img_Entity.ImgName;
-                entity.Src = Utils.OctOceanGlobal.Config.UrlRoot_Web_Image + $"/{entity.ArticleKey}/{img_Entity.ImgName}";
+                entity.Src = _pubComService._OctOceanConfig.UrlRoot_Web_Image + $"/{entity.ArticleKey}/{img_Entity.ImgName}";
             }
 
 
@@ -287,13 +296,13 @@ namespace WD.Management.WebSite.Controllers
                 {
 
                     //删除图片和缓存
-                    string f1 = Path.Combine(Utils.OctOceanGlobal.Config.FileRoot_Cache_Image, entity.ArticleKey, entity.ImgName);
+                    string f1 = Path.Combine(_pubComService._OctOceanConfig.FileRoot_Cache_Image, entity.ArticleKey, entity.ImgName);
                     if (System.IO.File.Exists(f1))
                     {
                         System.IO.File.Delete(f1);
                     }
 
-                    string f2 = Path.Combine(OctOceanGlobal.Config.FileRoot_Web_Image, entity.ArticleKey, entity.ImgName);
+                    string f2 = Path.Combine(_pubComService._OctOceanConfig.FileRoot_Web_Image, entity.ArticleKey, entity.ImgName);
                     if (System.IO.File.Exists(f2))
                     {
                         System.IO.File.Delete(f2);
@@ -328,8 +337,8 @@ namespace WD.Management.WebSite.Controllers
 
 
                 //获取系统所有图片
-                var db_sys_all_iamges = new Pri_ArticleImage_Dal().GetAllPri_ArticleImage();
-                string cp_web_root = OctOceanGlobal.Config.FileRoot_Web_Image;
+                var db_sys_all_iamges = _pubComService. _Pri_ArticleImage_DataService.GetAllPri_ArticleImage();
+                string cp_web_root = _pubComService._OctOceanConfig.FileRoot_Web_Image;
 
                 if (Directory.Exists(cp_web_root))
                 {
@@ -367,9 +376,9 @@ namespace WD.Management.WebSite.Controllers
                 }
 
                 //清理缓存
-                if (Directory.Exists(OctOceanGlobal.Config.FileRoot_Cache_Image))
+                if (Directory.Exists(_pubComService._OctOceanConfig.FileRoot_Cache_Image))
                 {
-                    Directory.Delete(OctOceanGlobal.Config.FileRoot_Cache_Image, true);
+                    Directory.Delete(_pubComService._OctOceanConfig.FileRoot_Cache_Image, true);
 
                 }
                 _status = 1;

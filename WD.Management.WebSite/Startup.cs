@@ -21,6 +21,15 @@ namespace WD.Management.WebSite
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton(new Utils.OctOceanConfig(
+                defaultConnectionString: Configuration.GetConnectionString("DefaultConnString")
+                 , fileRoot: Configuration.GetValue<string>("OctOcean:FileRoot")
+                 , urlRoot: Configuration.GetValue<string>("OctOcean:UrlRoot")
+                 , articlePreviewUrl: Configuration.GetValue<string>("OctOcean:ArticlePreviewUrl")));
+            
+            services.AddScoped<DataService.PubComService>();
+
+
             services.AddMvc();
         }
 

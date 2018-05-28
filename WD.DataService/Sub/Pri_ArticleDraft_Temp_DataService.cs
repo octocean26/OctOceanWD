@@ -6,15 +6,16 @@ using System.Text;
 using Dapper;
 using OctOcean.Com.Helper;
 using WD.Entity.Sub;
+using WD.Utils;
 
 namespace WD.DataService.Sub
 {
-    public class Pri_ArticleDraft_Temp_Dal
+    public class Pri_ArticleDraft_Temp_DataService
     {
         IDbConnection connection = null;
-        public Pri_ArticleDraft_Temp_Dal()
+        public Pri_ArticleDraft_Temp_DataService(OctOceanConfig octOceanConfig)
         {
-            this.connection = new SqlConnection(Utils.OctOceanGlobal.Config.DefaultConnectionString);
+            this.connection = new SqlConnection(octOceanConfig.DefaultConnectionString);
         }
 
         public int InsertPri_ArticleDraft_Temp(Pri_ArticleDraft_Temp_Entity entity)

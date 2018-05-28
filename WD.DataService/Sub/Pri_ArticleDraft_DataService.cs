@@ -7,16 +7,17 @@ using Dapper;
 using OctOcean.Com.Helper;
 using WD.Entity.Aid;
 using WD.Entity.Sub;
+using WD.Utils;
 
 namespace WD.DataService.Sub
 {
-    public class Pri_ArticleDraft_Dal
+    public class Pri_ArticleDraft_DataService
     {
 
         IDbConnection connection = null;
-        public Pri_ArticleDraft_Dal()
+        public Pri_ArticleDraft_DataService(OctOceanConfig octOceanConfig)
         {
-            this.connection = new SqlConnection(Utils.OctOceanGlobal.Config.DefaultConnectionString);
+            this.connection = new SqlConnection(octOceanConfig.DefaultConnectionString);
         }
 
         public int InsertPri_ArticleDraft(Pri_ArticleDraft_Entity entity)

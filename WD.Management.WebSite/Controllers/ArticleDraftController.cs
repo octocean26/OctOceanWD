@@ -3,15 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using WD.DataService;
 using WD.DataService.Sub;
 using WD.Entity.Aid;
 using WD.Entity.Sub;
 
 namespace WD.Management.WebSite.Controllers
 {
-    public class ArticleDraftController : Controller
+    public class ArticleDraftController : BaseController
     {
-        Pri_ArticleDraft_Dal draftdal = new Pri_ArticleDraft_Dal();
+
+        private readonly PubComService _pubComService = null;
+        private readonly Pri_ArticleDraft_DataService draftdal = null;
+        public ArticleDraftController(PubComService pubComService)
+        {
+            _pubComService = pubComService;
+           draftdal= _pubComService._Pri_ArticleDraft_DataService;
+        }
 
 
 
@@ -51,10 +59,10 @@ namespace WD.Management.WebSite.Controllers
             }
             else
             {
-                ContentText = new Pri_ArticleImage_Dal().ReplaceImagesPlaceholder(ContentText, ArticleKey);
+                ContentText = _pubComService._Pri_ArticleImage_DataService.ReplaceImagesPlaceholder(ContentText, ArticleKey);
 
                 //将数据存入到Temp中去
-                 Pri_ArticleDraft_Temp_Dal tempdal = new Pri_ArticleDraft_Temp_Dal();
+                Pri_ArticleDraft_Temp_DataService tempdal = _pubComService._Pri_ArticleDraft_Temp_DataService;
                 try
                 {
                     int oi = tempdal.InsertPri_ArticleDraft_Temp(new Pri_ArticleDraft_Temp_Entity()
@@ -131,7 +139,7 @@ namespace WD.Management.WebSite.Controllers
             }
             else
             {
-                Pub_Article_Dal padal = new  Pub_Article_Dal();
+                Pub_Article_DataService padal = _pubComService._Pub_Article_DataService;
                 try
                 {
                     padal.InsertPub_ArticleWithPri_ArticleDraft(ArticleKey, IsPublish);

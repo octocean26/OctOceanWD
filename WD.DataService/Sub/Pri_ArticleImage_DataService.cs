@@ -8,13 +8,13 @@ using WD.Entity.Sub;
 
 namespace WD.DataService.Sub
 {
-    public class Pri_ArticleImage_Dal
+    public class Pri_ArticleImage_DataService
     {
 
         IDbConnection connection = null;
-        public Pri_ArticleImage_Dal()
+        public Pri_ArticleImage_DataService(WD.Utils.OctOceanConfig octOceanConfig)
         {
-            this.connection = new SqlConnection(Utils.OctOceanGlobal.Config.DefaultConnectionString);
+            this.connection = new SqlConnection(octOceanConfig.DefaultConnectionString);
         }
 
 

@@ -8,12 +8,12 @@ using WD.Entity.Sub;
 
 namespace WD.DataService.Sub
 {
-    public class Base_ArticleCategory_Dal
+    public class Base_ArticleCategory_DataService
     {
         IDbConnection connection = null;
-        public Base_ArticleCategory_Dal()
+        internal Base_ArticleCategory_DataService(Utils.OctOceanConfig config)
         {
-            this.connection = new SqlConnection(Utils.OctOceanGlobal.Config.DefaultConnectionString);
+            this.connection = new SqlConnection(config.DefaultConnectionString);
         }
 
         public int InsertArticleCategory(Base_ArticleCategory_Entity entity)
