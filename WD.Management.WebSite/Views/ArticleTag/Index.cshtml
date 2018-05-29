@@ -1,0 +1,42 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model IEnumerable<VM_ArticleTag>
+
+<h2>文章标签管理</h2>
+
+<form method="post">
+    <table class="layui-table" lay-filter="attable" id="attable">
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>标签编码</th>
+                <th>标签名称</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int i = 0;
+                foreach (var ac in Model)
+                {
+                    <tr>
+                        <td>@(++i)</td>
+                        <td>@ac.ArticleTagCode</td>
+                        <td>@ac.ArticleTagName</td>
+                        <td>
+                            @*定位点标记帮助程序 使用 asp-route-{value} 属性生成“编辑”页面的链接，此处id必须和获取的参数name一致*@
+                            <a  asp-route-id="@ac.Id" asp-action="Edit" class="layui-btn layui-btn-xs layui-btn-normal"><i class="layui-icon">&#xe642;</i>编辑</a>
+                            <a asp-route-Id="@ac.Id" asp-action="Delete" class="layui-btn layui-btn-xs layui-btn-del"><i class="layui-icon">&#xe640;</i>删除</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <a asp-action="Edit" class="layui-btn layui-btn-sm layui-btn-green"><i class="layui-icon">&#xe608;</i>新增</a>
+</form>
+

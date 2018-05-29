@@ -41,5 +41,10 @@ namespace WD.DataService
         {
             get { return new Pub_Article_DataService(_OctOceanConfig); }
         }
+
+        public Base_ArticleTag_DataService _Base_ArticleTag_DataService
+        {
+            get { return new Base_ArticleTag_DataService(_OctOceanConfig); }
+        }
     }
 }

@@ -18,7 +18,7 @@ namespace WD.DataService.Sub
 
         public int InsertArticleCategory(Base_ArticleCategory_Entity entity)
         {
-            string sql = "INSERT INTO Base_ArticleCategory(ArticleCategoryName, ArticleCategoryCode,UpdateTime ) VALUES(@ArticleCategoryName,@ArticleCategoryCode,GETDATE())";
+            string sql = "INSERT INTO Base_ArticleCategory(ArticleCategoryName, ArticleCategoryCode ) VALUES(@ArticleCategoryName,@ArticleCategoryCode)";
             return connection.Execute(sql, new { ArticleCategoryName = entity.ArticleCategoryName, ArticleCategoryCode = entity.ArticleCategoryCode  });
 
         }
@@ -36,13 +36,13 @@ namespace WD.DataService.Sub
 
         public int UpdateArticleCategory(Base_ArticleCategory_Entity entity)
         {
-            string sql = "UPDATE Base_ArticleCategory SET ArticleCategoryCode=@ArticleCategoryCode, ArticleCategoryName=@ArticleCategoryName,  UpdateTime=GETDATE() WHERE Id=@Id;";
+            string sql = "UPDATE Base_ArticleCategory SET ArticleCategoryCode=@ArticleCategoryCode, ArticleCategoryName=@ArticleCategoryName WHERE Id=@Id;";
             return connection.Execute(sql, new { ArticleCategoryName = entity.ArticleCategoryName, ArticleCategoryCode = entity.ArticleCategoryCode,  Id = entity.Id });
         }
 
         public IList<Base_ArticleCategory_Entity> GetAllArticleCategory(string where="", object parObj=null)
         {
-            string sql = "select  Id , ArticleCategoryName, ArticleCategoryCode, UpdateTime from Base_ArticleCategory   ";
+            string sql = "select  Id , ArticleCategoryName, ArticleCategoryCode from Base_ArticleCategory   ";
             if (!string.IsNullOrWhiteSpace(where))
             {
                 sql += where;
@@ -56,7 +56,7 @@ namespace WD.DataService.Sub
 
         public Base_ArticleCategory_Entity GetArticleCategory(int Id)
         {
-            string sql = "select  Id , ArticleCategoryName, ArticleCategoryCode,UpdateTime from Base_ArticleCategory where  Id=@Id";
+            string sql = "select  Id , ArticleCategoryName, ArticleCategoryCode from Base_ArticleCategory where  Id=@Id";
 
             var query = connection.Query<Base_ArticleCategory_Entity>(sql, new { Id = Id }).AsList();
             if (query != null && query.Count > 0)
