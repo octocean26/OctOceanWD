@@ -1,0 +1,82 @@
+﻿
+@{
+    ViewData["Title"] = "图片清理";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model IDictionary<string, string[]>
+@{
+    bool BtnDisabled = Model.Values.Sum(a => a.Length) == 0;
+}
+<div style="margin-bottom:20px;">
+
+    <button type="button" id="btnclear" class="layui-btn layui-btn-green @(BtnDisabled?"layui-disabled":"")" @(BtnDisabled ? "disabled" : "")><i class="layui-icon">&#xe640;</i>清理不再使用的和缓存的图片</button>
+</div>
+
+<div class="layui-collapse">
+    @foreach (var item in Model)
+    {
+        if (item.Value.Length == 0)
+        {
+            continue;
+        }
+        <div class="layui-colla-item">
+            <h2 class="layui-colla-title">
+                <span style="padding-right:20px;">@item.Key</span>
+                【共有 <span style="color:red;">@item.Value.Length</span> 条需要清理】
+            </h2>
+            <div class="layui-colla-content  layui-show">
+                <ul class="aic-list">
+                    @foreach (string name in item.Value)
+                    {
+                        <li><a href="@($"{ ViewBag.UrlRoot_Cache_Image }/{item.Key}/{name}")" target="_blank">@name</a></li>
+
+                    }
+
+                </ul>
+                <div class="float-clear"></div>
+            </div>
+        </div>
+
+    }
+
+</div>
+
+@section CustomBottomScript{
+    <script>
+        $('#btnclear').click(function () {
+            layer.confirm("清除之后不可恢复，是否确定清除图片？", { icon: 3, title: '提示' }, function (index) {
+
+                layer.load(2);
+
+                //向服务端发送删除指令
+                $.post('/ArticleImage/Clear', {
+
+
+                }, function (rd) {
+                    layer.closeAll();
+
+                    if (rd.status == 1) {
+                        layer.alert("操作完成！");
+
+
+                    }
+                    else {
+                        layer.alert('操作失败，：' + rd.msg, { icon: 5 });
+
+                    }
+
+                }, "json");
+
+
+
+
+
+            });
+
+
+        });
+    </script>
+
+
+}
+

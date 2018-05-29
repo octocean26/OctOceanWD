@@ -8,7 +8,7 @@ using WD.Management.WebSite.Models;
 
 namespace WD.Management.WebSite.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         public IActionResult Index()
         {

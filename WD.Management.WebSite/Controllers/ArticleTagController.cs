@@ -9,7 +9,7 @@ using WD.Management.WebSite.Models;
 
 namespace WD.Management.WebSite.Controllers
 {
-    public class ArticleTagController : Controller
+    public class ArticleTagController : BaseController
     {
 
         readonly Base_ArticleTag_DataService _base_ArticleTag_DataService = null;

@@ -24,7 +24,7 @@ namespace WD.Management.WebSite.Controllers
             imgdal = pubComService._Pri_ArticleImage_DataService;
         }
 
-         
+
         [Route("Upload/{ArticleKey}")]
         public IActionResult Upload(string ArticleKey) //在文章编辑页面，点击上传时调用，可以同时上传多个图片文件
         {
@@ -184,7 +184,7 @@ namespace WD.Management.WebSite.Controllers
                     {
                         System.IO.File.Copy(fullname, Path.Combine(article_sysfile_root, fn), true);
                         //插入到图片表里面
-                        imgdal.InsertPri_ArticleImage(new  Pri_ArticleImage_Entity()
+                        imgdal.InsertPri_ArticleImage(new Pri_ArticleImage_Entity()
                         {
                             ArticleKey = ArticleKey,
                             Height = 0,
@@ -218,7 +218,7 @@ namespace WD.Management.WebSite.Controllers
         [Route("Edit/{ImageKey}", Name = "image_edit")]
         public ActionResult Edit(string ImageKey)
         {
-              Pri_ArticleImage_Entity entity = imgdal.GetPri_ArticleImage_Entity(ImageKey);
+            Pri_ArticleImage_Entity entity = imgdal.GetPri_ArticleImage_Entity(ImageKey);
             if (entity == null) return Content("图片信息无效");
             return View(entity);
         }
@@ -337,7 +337,7 @@ namespace WD.Management.WebSite.Controllers
 
 
                 //获取系统所有图片
-                var db_sys_all_iamges = _pubComService. _Pri_ArticleImage_DataService.GetAllPri_ArticleImage();
+                var db_sys_all_iamges = _pubComService._Pri_ArticleImage_DataService.GetAllPri_ArticleImage();
                 string cp_web_root = _pubComService._OctOceanConfig.FileRoot_Web_Image;
 
                 if (Directory.Exists(cp_web_root))
@@ -394,5 +394,37 @@ namespace WD.Management.WebSite.Controllers
         }
 
 
+        [HttpGet("ClearUp")]
+        public ActionResult ClearUp()
+        {
+            Dictionary<string, string[]> dicClearImages = new Dictionary<string, string[]>();
+            string UrlRoot_Cache_Image = _pubComService._OctOceanConfig.UrlRoot_Cache_Image;
+            string web_root = _pubComService._OctOceanConfig.FileRoot_Web_Image;
+
+            //获取系统所有图片
+            var sys_all_iamges = _pubComService._Pri_ArticleImage_DataService.GetAllPri_ArticleImage();
+
+            if (Directory.Exists(web_root))
+            {
+                //获取所有的文章目录
+                string[] all_web_article_diries = Directory.GetDirectories(web_root);
+                foreach (string articlekey_dir in all_web_article_diries)
+                {
+                    string articlekey = Path.GetFileNameWithoutExtension(articlekey_dir + ".wy");//获取ArticleKey的值
+
+
+
+                    //获取当前key下的所有图片
+                    string[] all_web_article_images = Directory.GetFiles(articlekey_dir);
+                    //如果图片中存在一张没在使用的情况
+                    dicClearImages[articlekey] = all_web_article_images.Select(c => Path.GetFileName(c))
+                        .Where(a => sys_all_iamges.FirstOrDefault(b => b.ArticleKey == articlekey && b.ImgName == a) == null).ToArray();
+                 
+                }
+            }
+            ViewBag.UrlRoot_Cache_Image = UrlRoot_Cache_Image;
+            //View
+            return View(dicClearImages);
+        }
     }
 }
