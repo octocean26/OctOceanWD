@@ -1,0 +1,73 @@
+﻿Razor 页面是 ASP.NET Core MVC 的一个新功能，因此可以在ASP.NET Core MVC项目中直接使用Razor页面功能，而不需要特意的去写启用Razor页面的代码。
+
+Razor 视图文件中的@page 指令的作用：@page 使文件转换为一个 MVC 操作 ，这意味着它将直接处理请求，而无需通过控制器处理。注意：@page 必须是页面上的第一个 Razor 指令。
+ 
+Razor页面的URL 路径的关联由页面在文件系统中的位置决定。url路径不带有.cshtml后缀，但是系统会自动的查找对应的Razor页面。
+注意：
+默认情况下，运行时在“Pages”文件夹中查找 Razor 页面文件。
+URL 未包含页面时，Index 为默认页面。
+
+
+由于 模型绑定、标记帮助程序和 HTML 帮助程序，只能作用于 Razor 页面类中定义的属性，因此需要特别注意：页面类中必须定义属性而不是变量。
+
+
+如果需要应用EF，可以在Startup.cs中，对Dbcontext进行初始化：https://docs.microsoft.com/zh-cn/aspnet/core/mvc/razor-pages/?tabs=visual-studio
+ public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddDbContext<AppDbContext>(options =>
+                              options.UseInMemoryDatabase("name"));
+            services.AddMvc();
+        }
+
+
+
+
+
+
+asp-page-handler="delete" :
+按照惯例，根据方案 OnPost[handler]Async 基于 handler 参数的值来选择处理程序方法的名称。
+因为本示例中 handler 是 delete，因此 OnPostDeleteAsync 处理程序方法用于处理 POST 请求。 如果 asp-page-handler 设置为不同值（如 remove），则选择名称为 OnPostRemoveAsync 的页面处理程序方法
+
+
+
+ASP.NET 在控制器上公开了 TempData 属性。 此属性可存储数据，直至数据被读取，一旦读取数据就会丢失。默认情况下启用基于 cookie 的 TempData 提供程序。如果需要基于会话的TempData提供程序，具体见 https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/app-state?tabs=aspnetcore2x#temp
+
+asp-page-handler 是 asp-page 的配套属性。 asp-page-handler 生成提交到页面定义的各个处理程序方法的 URL。 未指定 asp-page，链接到当前页面。
+
+指定 Razor 页面位于内容根目录中:默认情况下，Razor 页面位于 /Pages 目录的根位置。 向 AddMvc 添加 WithRazorPagesAtContentRoot，以指定 Razor 页面位于应用的内容根目录 (ContentRootPath) 中,
+services.AddMvc()
+    .AddRazorPagesOptions(options =>
+    {
+        ...
+    })
+    .WithRazorPagesAtContentRoot();
+
+
+
+指定 Razor 页面位于自定义根目录中,向 AddMvc 添加 WithRazorPagesRoot，以指定 Razor 页面位于应用中自定义根目录位置（提供相对路径）:
+services.AddMvc()
+    .AddRazorPagesOptions(options =>
+    {
+        ...
+    })
+    .WithRazorPagesRoot("/path/to/razor/pages");	`
+
+
+
+使用 Configuration.GetConnectionString("MovieContext")获取 appsettings.json中的配置项
+
+
+如何在页面添加下拉框的绑定：见 https://docs.microsoft.com/zh-cn/aspnet/core/tutorials/razor-pages/search 最下面示例
+
+DataType特性的使用见：https://docs.microsoft.com/zh-cn/aspnet/core/tutorials/razor-pages/validation
+
+Razor页面派生于PageModel类，通过在构造函数中使用依赖关系注入将 MovieContext 添加到Razor页面中。注：在控制器中，也可以在控制器的构造函数中使用依赖注入将dbcontext引用到控制器中，从而进行访问。
+
+@page 可以定义路由模板，例如：@page "{id:int?}"，该模板直接影响着使用了“asp-page”标签指令生成的url路径。如果不指定模板，可以通过对应的方法的参数进行匹配。一旦设置了模板，就优先按照模板来匹配。
+
+
+搜索的应用，提交搜索信息，使用input的name设置，：https://docs.microsoft.com/zh-cn/aspnet/core/tutorials/razor-pages/search
+
+使用特性添加验证：https://docs.microsoft.com/zh-cn/aspnet/core/tutorials/razor-pages/validation
+
+上传文件简单示例：https://docs.microsoft.com/zh-cn/aspnet/core/tutorials/razor-pages/uploading-files
