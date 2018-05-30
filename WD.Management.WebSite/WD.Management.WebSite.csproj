@@ -20,4 +20,8 @@
     <ProjectReference Include="..\WD.Entity\WD.Entity.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="notes\" />
+  </ItemGroup>
+
 </Project>
