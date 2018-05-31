@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using WD.DataService;
 using WD.DataService.Sub;
@@ -18,10 +19,12 @@ namespace WD.Management.WebSite.Controllers
         {
             _PubComService = pubComService;
         }
+
+
         public IActionResult Index()
         {
             VM_ArticleManagement vm = new VM_ArticleManagement();
-            
+
             vm.Base_ArticleCategoryddl = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(
                 _PubComService._Base_ArticleCategoryService.GetAllArticleCategory(), "ArticleCategoryCode", "ArticleCategoryName", "");//默认选择空值
 
@@ -36,6 +39,49 @@ namespace WD.Management.WebSite.Controllers
             return View(vm);
         }
 
+
+        public IActionResult Edit(string ArticleKey)
+        {
+            VM_Article article = new VM_Article()
+            {
+                ArticlePreviewUrl = _PubComService._OctOceanConfig.ArticlePreviewUrl + "/" + ArticleKey + "?t=p"
+            };
+
+            if (string.IsNullOrEmpty(ArticleKey))
+            {
+                article.ArticleGuidKey = "A_" + Guid.NewGuid().ToString().Replace("-", "");
+                article.IsPublish = false;
+                article.CanUploadOrPublish = false;
+            }
+            else
+            {
+                var entity = _PubComService._Pri_ArticleDraft_DataService.GetPri_ArticleDraft(ArticleKey);
+                if (entity == null)
+                {
+                    return RedirectToAction("Index");
+                }
+                article.ArticleGuidKey = ArticleKey;
+                article.ArticleTitle = entity.ArticleTitle;
+                article.ArticleCategory = entity.ArticleCategory;
+                article.ContentText = entity.ContentText;
+                article.ArticleTag = entity.ArticleTag;
+                article.ArticleDesc = entity.ArticleDesc;
+                article.AidStyle = entity.AidStyle;
+                article.IsPublish = _PubComService._Pub_Article_DataService.GetPub_Article_Entity(ArticleKey) != null;
+                article.CanUploadOrPublish = entity != null;
+            }
+
+            article.Base_ArticleCategoryddl = new SelectList(_PubComService._Base_ArticleCategoryService.GetAllArticleCategory(), "ArticleCategoryCode", "ArticleCategoryName", ""); //默认选择空值
+            article.Base_ArticleTagList = _PubComService._Base_ArticleTag_DataService.GetAllArticleTag();
+            var allimagelist = _PubComService._Pri_ArticleImage_DataService.GetAllPri_ArticleImage();
+            if (allimagelist != null)
+            {
+                article.Pri_ArticleImageList = allimagelist.OrderBy(a => a.UpdateTime).ToList();
+            }
+
+
+            return View(article);
+        }
 
 
         /// <summary>
@@ -70,7 +116,7 @@ namespace WD.Management.WebSite.Controllers
                 ArticleTag = ArticleTag
             };
 
-            data =  _PubComService._Pri_ArticleDraft_DataService.GetPri_ArticleDraftPagerList(where, PageIndex, PageSize, obj, orderColumn, orderType, out sumcount);
+            data = _PubComService._Pri_ArticleDraft_DataService.GetPri_ArticleDraftPagerList(where, PageIndex, PageSize, obj, orderColumn, orderType, out sumcount);
 
 
             //if (string.IsNullOrEmpty(ArticleCategoryCode))
@@ -85,10 +131,8 @@ namespace WD.Management.WebSite.Controllers
             //    data = draftdal.GetPri_ArticleDraftPagerList(where, PageIndex, PageSize, new { ArticleCategory = ArticleCategoryCode }, orderColumn, orderType, out sumcount);
             //}
             return new { code = 0, msg = "", count = sumcount, data = data };
-          
+
         }
-
-
 
 
         /// <summary>
@@ -118,7 +162,6 @@ namespace WD.Management.WebSite.Controllers
         }
 
 
-
         /// <summary>
         /// 对文章进行发布或者取消发布操作，注意：该方法只是对Pub_Article表进行了操作，能够执行发布的前提是存在draft数据并且不是draft数据没有删除
         /// </summary>
@@ -130,7 +173,7 @@ namespace WD.Management.WebSite.Controllers
             string _msg = string.Empty;
             int _status = 0;
             //先判断是否已经存在了Draft中去
-            var draftentity =_PubComService._Pri_ArticleDraft_DataService.GetPri_ArticleDraft(ArticleKey);
+            var draftentity = _PubComService._Pri_ArticleDraft_DataService.GetPri_ArticleDraft(ArticleKey);
             //发布按钮展示的时候，已经进行过限制，此处为了保险，使用服务端限制
             if (draftentity == null) //如果没有数据或者数据已经删除，需要重新保存
             {
@@ -139,7 +182,7 @@ namespace WD.Management.WebSite.Controllers
 
             }
             else
-            { 
+            {
                 try
                 {
                     _PubComService._Pub_Article_DataService.InsertPub_ArticleWithPri_ArticleDraft(ArticleKey, IsPublish);
@@ -155,9 +198,6 @@ namespace WD.Management.WebSite.Controllers
             return new { status = _status, msg = _msg };
 
         }
-
-
-
 
 
         /// <summary>
@@ -199,7 +239,7 @@ namespace WD.Management.WebSite.Controllers
 
                 //将数据存入到Temp中去
                 var tempdal = _PubComService._Pri_ArticleDraft_Temp_DataService;
-                var  draftdal = _PubComService._Pri_ArticleDraft_DataService;
+                var draftdal = _PubComService._Pri_ArticleDraft_DataService;
 
                 try
                 {
@@ -253,6 +293,7 @@ namespace WD.Management.WebSite.Controllers
             return new { status = _status, msg = _msg, ak = ArticleKey, sc = savecount };
 
         }
+
 
 
     }
