@@ -76,8 +76,8 @@
                             @foreach (var at in Model.Base_ArticleTagList)
                             {
 
-                                bool chked =   Model.ArticleTag.Contains(':' + at.ArticleTagCode.Trim() + ':');
-                                
+                                bool chked = Model.ArticleTag.Contains(':' + at.ArticleTagCode.Trim() + ':');
+
                                 <input type="checkbox" @( chked ? "checked=\"checked\"" : "") lay-filter="checkwy" name="like[@at.ArticleTagCode]" value="@at.ArticleTagCode.Trim()" title="@at.ArticleTagName">
                             }
 
@@ -141,7 +141,7 @@
             </div>
 
             <input type="hidden" asp-for="ArticleGuidKey" id="hfArticleKey" />
-            
+
 
             <div class="layui-row">
                 <div class="layui-col-md6">

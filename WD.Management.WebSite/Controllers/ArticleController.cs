@@ -12,9 +12,11 @@ using WD.Management.WebSite.Models;
 
 namespace WD.Management.WebSite.Controllers
 {
+    
     public class ArticleController : BaseController
     {
         readonly PubComService _PubComService = null;
+        
         public ArticleController(PubComService pubComService)
         {
             _PubComService = pubComService;
@@ -39,7 +41,7 @@ namespace WD.Management.WebSite.Controllers
             return View(vm);
         }
 
-
+        [Route("Article/Edit/{ArticleKey}")]
         public IActionResult Edit(string ArticleKey)
         {
             VM_Article article = new VM_Article()

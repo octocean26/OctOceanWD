@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2043
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WD.WebSite", "WD.WebSite\WD.WebSite.csproj", "{E9912021-703F-45A0-A0DF-767689321659}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WD.Management.WebSite", "WD.Management.WebSite\WD.Management.WebSite.csproj", "{CAEA0374-92DD-4F9A-9012-848934E9F003}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WD.WebAPI", "WD.WebAPI\WD.WebAPI.csproj", "{A69D8E06-6680-48AD-B702-D43ED746308D}"
@@ -15,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WD.DataService", "WD.DataSe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OctOcean.Com", "OctOcean.Com\OctOcean.Com.csproj", "{83CFBBCF-1C87-45F7-9FBA-0A12205DD3B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WD.Utils", "WD.Utils\WD.Utils.csproj", "{7306CA06-C277-4D29-8CE7-386331A0A5BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WD.Utils", "WD.Utils\WD.Utils.csproj", "{7306CA06-C277-4D29-8CE7-386331A0A5BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +21,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E9912021-703F-45A0-A0DF-767689321659}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E9912021-703F-45A0-A0DF-767689321659}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E9912021-703F-45A0-A0DF-767689321659}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E9912021-703F-45A0-A0DF-767689321659}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CAEA0374-92DD-4F9A-9012-848934E9F003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CAEA0374-92DD-4F9A-9012-848934E9F003}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CAEA0374-92DD-4F9A-9012-848934E9F003}.Release|Any CPU.ActiveCfg = Release|Any CPU
