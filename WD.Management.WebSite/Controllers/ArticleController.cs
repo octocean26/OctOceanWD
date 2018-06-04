@@ -101,6 +101,24 @@ namespace WD.Management.WebSite.Controllers
            return View(_ArticleFormatCode);
         }
 
+        [Route("Article/HtmlEdit/{ArticleKey}")]
+        public IActionResult HtmlEdit(string ArticleKey)
+        {
+            var entity=  _PubComService._Pri_ArticleDraft_DataService.GetPri_ArticleDraft(ArticleKey);
+            VM_ArticleHtmlEdit articleHtmlEdit = new VM_ArticleHtmlEdit()
+            {
+                ArticleKey = entity == null ? "" : entity.ArticleKey,
+                ContentText = entity.ContentText
+            };
+            return View(articleHtmlEdit);
+        }
+        [HttpPost]
+        public IActionResult HtmlEdit(VM_ArticleHtmlEdit articleHtmlEdit)
+        {
+            _PubComService._Pri_ArticleDraft_DataService.UpdatePri_ArticleDraftContentText(articleHtmlEdit.ArticleKey, articleHtmlEdit.ContentText);
+            return View(articleHtmlEdit);
+
+        }
 
         /// <summary>
         /// 分页功能

@@ -14,5 +14,19 @@ namespace WD.Management.WebSite.Controllers
         //{
         //    _PubComService = pubComService;
         //}
+
+        public bool CheckLogin()
+        {
+            byte[] o = null;
+            if (HttpContext.Session != null && HttpContext.Session.TryGetValue("_octocean__user_", out o))
+            {
+                if (o != null && System.Text.Encoding.Default.GetString(o) == "121222")
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }
