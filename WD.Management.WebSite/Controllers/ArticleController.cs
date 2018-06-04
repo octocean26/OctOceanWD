@@ -86,6 +86,22 @@ namespace WD.Management.WebSite.Controllers
         }
 
 
+        public IActionResult FormatCode()
+        {
+            VM_ArticleFormatCode _ArticleFormatCode = new VM_ArticleFormatCode();
+
+            return View(_ArticleFormatCode);
+        }
+
+        [HttpPost]
+        public IActionResult FormatCode(VM_ArticleFormatCode _ArticleFormatCode)
+        {
+            string ct = _ArticleFormatCode.ContentText;
+            _ArticleFormatCode.ContentText = ct.Replace(_ArticleFormatCode.OldString, _ArticleFormatCode.NewString);
+           return View(_ArticleFormatCode);
+        }
+
+
         /// <summary>
         /// 分页功能
         /// </summary>
@@ -295,6 +311,8 @@ namespace WD.Management.WebSite.Controllers
             return new { status = _status, msg = _msg, ak = ArticleKey, sc = savecount };
 
         }
+
+
 
 
 
