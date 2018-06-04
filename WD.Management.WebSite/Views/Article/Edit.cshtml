@@ -140,7 +140,7 @@
                 </div>
             </div>
 
-            <input type="hidden" asp-for="ArticleGuidKey" id="hfArticleKey" />
+            <input type="hidden" asp-for="ArticleKey" id="hfArticleKey" />
 
 
             <div class="layui-row">
@@ -318,7 +318,7 @@
                  layer.open({
                     type: 2 //你可以title: ['文本', 'font-size:18px;']，数组第二项可以写任意css样式；如果你不想显示标题栏，你可以title: false
                     ,title: '图片上传'
-                     , content: '/ArticleImage/Upload/@Model.ArticleGuidKey'
+                     , content: '/ArticleImage/Upload/@Model.ArticleKey'
                     , area: ['800px', '500px']
                     , resize: false//是否可以拉伸
                     //右上角关闭回调
@@ -338,7 +338,7 @@
                      , yes: function (index, layero) {
                          var submitimgName = layer.getChildFrame('#hfSubmitImageFile', index).val();
                          if (submitimgName) {
-                             $.post("/ArticleImage/Confirm/@Model.ArticleGuidKey", {
+                             $.post("/ArticleImage/Confirm/@Model.ArticleKey", {
                                  CacheFileNames: submitimgName
                              }, function (data) {
                                  if (data.status == 1) {
@@ -374,12 +374,12 @@
                 layer.open({
                     type: 2,
                     title: '文章HTML源码'
-                    , content: 'Article/HtmlEdit/@Model.ArticleGuidKey'
+                    , content: 'Article/HtmlEdit/@Model.ArticleKey'
                     , area: ['1200px', '600px']
                     , resize: false//是否可以拉伸
                     , cancel: function (index, layero) {
                         if (layer.getChildFrame('#hfIsSave', index).val()) {
-                            window.location = "/Article/Edit/@Model.ArticleGuidKey";
+                            window.location = "/Article/Edit/@Model.ArticleKey";
 
                         }
                         //alert(layer.getChildFrame('title', index).text());// - 获取iframe页的DOM

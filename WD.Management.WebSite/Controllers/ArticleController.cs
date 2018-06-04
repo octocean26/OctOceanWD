@@ -22,6 +22,7 @@ namespace WD.Management.WebSite.Controllers
             _PubComService = pubComService;
         }
 
+        #region 文章列表界面
 
         public IActionResult Index()
         {
@@ -39,85 +40,6 @@ namespace WD.Management.WebSite.Controllers
             ViewData["ArticlePreviewUrl"] = _PubComService._OctOceanConfig.ArticlePreviewUrl;
 
             return View(vm);
-        }
-
-        [Route("Article/Edit/{ArticleKey}")]
-        public IActionResult Edit(string ArticleKey)
-        {
-            VM_Article article = new VM_Article()
-            {
-                ArticlePreviewUrl = _PubComService._OctOceanConfig.ArticlePreviewUrl + "/" + ArticleKey + "?t=p"
-            };
-
-            if (string.IsNullOrEmpty(ArticleKey))
-            {
-                article.ArticleGuidKey = "A_" + Guid.NewGuid().ToString().Replace("-", "");
-                article.IsPublish = false;
-                article.CanUploadOrPublish = false;
-            }
-            else
-            {
-                var entity = _PubComService._Pri_ArticleDraft_DataService.GetPri_ArticleDraft(ArticleKey);
-                if (entity == null)
-                {
-                    return RedirectToAction("Index");
-                }
-                article.ArticleGuidKey = ArticleKey;
-                article.ArticleTitle = entity.ArticleTitle;
-                article.ArticleCategory = entity.ArticleCategory;
-                article.ContentText = entity.ContentText;
-                article.ArticleTag = entity.ArticleTag;
-                article.ArticleDesc = entity.ArticleDesc;
-                article.AidStyle = entity.AidStyle;
-                article.IsPublish = _PubComService._Pub_Article_DataService.GetPub_Article_Entity(ArticleKey) != null;
-                article.CanUploadOrPublish = entity != null;
-            }
-
-            article.Base_ArticleCategoryddl = new SelectList(_PubComService._Base_ArticleCategoryService.GetAllArticleCategory(), "ArticleCategoryCode", "ArticleCategoryName", ""); //默认选择空值
-            article.Base_ArticleTagList = _PubComService._Base_ArticleTag_DataService.GetAllArticleTag();
-            var allimagelist = _PubComService._Pri_ArticleImage_DataService.GetAllPri_ArticleImage();
-            if (allimagelist != null)
-            {
-                article.Pri_ArticleImageList = allimagelist.OrderBy(a => a.UpdateTime).ToList();
-            }
-
-
-            return View(article);
-        }
-
-
-        public IActionResult FormatCode()
-        {
-            VM_ArticleFormatCode _ArticleFormatCode = new VM_ArticleFormatCode();
-
-            return View(_ArticleFormatCode);
-        }
-
-        [HttpPost]
-        public IActionResult FormatCode(VM_ArticleFormatCode _ArticleFormatCode)
-        {
-            string ct = _ArticleFormatCode.ContentText;
-            _ArticleFormatCode.ContentText = ct.Replace(_ArticleFormatCode.OldString, _ArticleFormatCode.NewString);
-           return View(_ArticleFormatCode);
-        }
-
-        [Route("Article/HtmlEdit/{ArticleKey}")]
-        public IActionResult HtmlEdit(string ArticleKey)
-        {
-            var entity=  _PubComService._Pri_ArticleDraft_DataService.GetPri_ArticleDraft(ArticleKey);
-            VM_ArticleHtmlEdit articleHtmlEdit = new VM_ArticleHtmlEdit()
-            {
-                ArticleKey = entity == null ? "" : entity.ArticleKey,
-                ContentText = entity.ContentText
-            };
-            return View(articleHtmlEdit);
-        }
-        [HttpPost]
-        public IActionResult HtmlEdit(VM_ArticleHtmlEdit articleHtmlEdit)
-        {
-            _PubComService._Pri_ArticleDraft_DataService.UpdatePri_ArticleDraftContentText(articleHtmlEdit.ArticleKey, articleHtmlEdit.ContentText);
-            return View(articleHtmlEdit);
-
         }
 
         /// <summary>
@@ -170,71 +92,54 @@ namespace WD.Management.WebSite.Controllers
 
         }
 
+        #endregion
 
-        /// <summary>
-        /// 删除文章，并彻底删除该文章所有的记录，否则更新draft和发布后的删除状态
-        /// </summary>
-        /// <param name="ArticleKey"></param>
-        /// <returns></returns>
-        public object Delete(string ArticleKey)
+
+        #region 文章编辑界面
+
+        [Route("Article/Edit/{ArticleKey}")]
+        public IActionResult Edit(string ArticleKey)
         {
-            int _status = 0;
-            string _msg = "";
-            try
+            VM_Article article = new VM_Article()
             {
-                //如果没有执行过删除，就更新一下状态，否则就彻底删除
-                _PubComService._Pri_ArticleDraft_DataService.DeleteAndClearTemp(ArticleKey);
-                _status = 1;
-            }
-            catch (Exception ex)
+                ArticlePreviewUrl = _PubComService._OctOceanConfig.ArticlePreviewUrl + "/" + ArticleKey + "?t=p"
+            };
+
+            if (string.IsNullOrEmpty(ArticleKey))
             {
-                _status = 4;
-                _msg = ex.Message;
-
-            }
-            return new { status = _status, msg = _msg };
-
-
-        }
-
-
-        /// <summary>
-        /// 对文章进行发布或者取消发布操作，注意：该方法只是对Pub_Article表进行了操作，能够执行发布的前提是存在draft数据并且不是draft数据没有删除
-        /// </summary>
-        /// <param name="ArticleKey"></param>
-        /// <param name="IsPublish"></param>
-        /// <returns></returns>
-        public object Publish(string ArticleKey, bool IsPublish)
-        {
-            string _msg = string.Empty;
-            int _status = 0;
-            //先判断是否已经存在了Draft中去
-            var draftentity = _PubComService._Pri_ArticleDraft_DataService.GetPri_ArticleDraft(ArticleKey);
-            //发布按钮展示的时候，已经进行过限制，此处为了保险，使用服务端限制
-            if (draftentity == null) //如果没有数据或者数据已经删除，需要重新保存
-            {
-                _status = 2;
-                _msg = "请先保存数据";
-
+                article.ArticleKey = "A_" + Guid.NewGuid().ToString().Replace("-", "");
+                article.IsPublish = false;
+                article.CanUploadOrPublish = false;
             }
             else
             {
-                try
+                var entity = _PubComService._Pri_ArticleDraft_DataService.GetPri_ArticleDraft(ArticleKey);
+                if (entity == null)
                 {
-                    _PubComService._Pub_Article_DataService.InsertPub_ArticleWithPri_ArticleDraft(ArticleKey, IsPublish);
-                    _status = 1;
+                    return RedirectToAction("Index");
                 }
-                catch (Exception ex)
-                {
-                    _status = 4;
-                    _msg = ex.Message;
-                }
-
+                article.ArticleKey = ArticleKey;
+                article.ArticleTitle = entity.ArticleTitle;
+                article.ArticleCategory = entity.ArticleCategory;
+                article.ContentText = entity.ContentText;
+                article.ArticleTag = entity.ArticleTag;
+                article.ArticleDesc = entity.ArticleDesc;
+                article.AidStyle = entity.AidStyle;
+                article.IsPublish = _PubComService._Pub_Article_DataService.GetPub_Article_Entity(ArticleKey) != null;
+                article.CanUploadOrPublish = entity != null;
             }
-            return new { status = _status, msg = _msg };
 
+            article.Base_ArticleCategoryddl = new SelectList(_PubComService._Base_ArticleCategoryService.GetAllArticleCategory(), "ArticleCategoryCode", "ArticleCategoryName", ""); //默认选择空值
+            article.Base_ArticleTagList = _PubComService._Base_ArticleTag_DataService.GetAllArticleTag();
+            var allimagelist = _PubComService._Pri_ArticleImage_DataService.GetAllPri_ArticleImage(ArticleKey);
+            if (allimagelist != null)
+            {
+                article.Pri_ArticleImageList = allimagelist.OrderBy(a => a.UpdateTime).ToList();
+            }
+
+
+            return View(article);
         }
-
 
         /// <summary>
         /// 定时自动保存文章到Draft和Temp中去
@@ -249,6 +154,7 @@ namespace WD.Management.WebSite.Controllers
         /// <returns></returns>
         public object Save(string ArticleKey, string ArticleTitle, string ArticleCategory, string ContentText, string ArticleTag, string ArticleDesc, string AidStyle)
         {
+            return "";
             int _status = 0;
             string _msg = string.Empty;
             int savecount = 0;
@@ -330,6 +236,112 @@ namespace WD.Management.WebSite.Controllers
 
         }
 
+
+        #endregion
+
+
+        public IActionResult FormatCode()
+        {
+            VM_ArticleFormatCode _ArticleFormatCode = new VM_ArticleFormatCode();
+
+            return View(_ArticleFormatCode);
+        }
+
+        [HttpPost]
+        public IActionResult FormatCode(VM_ArticleFormatCode _ArticleFormatCode)
+        {
+            string ct = _ArticleFormatCode.ContentText;
+            _ArticleFormatCode.ContentText = ct.Replace(_ArticleFormatCode.OldString, _ArticleFormatCode.NewString);
+           return View(_ArticleFormatCode);
+        }
+
+        [Route("Article/HtmlEdit/{ArticleKey}")]
+        public IActionResult HtmlEdit(string ArticleKey)
+        {
+            var entity=  _PubComService._Pri_ArticleDraft_DataService.GetPri_ArticleDraft(ArticleKey);
+            VM_ArticleHtmlEdit articleHtmlEdit = new VM_ArticleHtmlEdit()
+            {
+                ArticleKey = entity == null ? "" : entity.ArticleKey,
+                ContentText = entity.ContentText
+            };
+            return View(articleHtmlEdit);
+        }
+        [HttpPost]
+        public IActionResult HtmlEdit(VM_ArticleHtmlEdit articleHtmlEdit)
+        {
+            _PubComService._Pri_ArticleDraft_DataService.UpdatePri_ArticleDraftContentText(articleHtmlEdit.ArticleKey, articleHtmlEdit.ContentText);
+            return View(articleHtmlEdit);
+
+        }
+
+ 
+
+        /// <summary>
+        /// 删除文章，并彻底删除该文章所有的记录，否则更新draft和发布后的删除状态
+        /// </summary>
+        /// <param name="ArticleKey"></param>
+        /// <returns></returns>
+        public object Delete(string ArticleKey)
+        {
+            int _status = 0;
+            string _msg = "";
+            try
+            {
+                //如果没有执行过删除，就更新一下状态，否则就彻底删除
+                _PubComService._Pri_ArticleDraft_DataService.DeleteAndClearTemp(ArticleKey);
+                _status = 1;
+            }
+            catch (Exception ex)
+            {
+                _status = 4;
+                _msg = ex.Message;
+
+            }
+            return new { status = _status, msg = _msg };
+
+
+        }
+
+
+        /// <summary>
+        /// 对文章进行发布或者取消发布操作，注意：该方法只是对Pub_Article表进行了操作，能够执行发布的前提是存在draft数据并且不是draft数据没有删除
+        /// </summary>
+        /// <param name="ArticleKey"></param>
+        /// <param name="IsPublish"></param>
+        /// <returns></returns>
+        public object Publish(string ArticleKey, bool IsPublish)
+        {
+            string _msg = string.Empty;
+            int _status = 0;
+            //先判断是否已经存在了Draft中去
+            var draftentity = _PubComService._Pri_ArticleDraft_DataService.GetPri_ArticleDraft(ArticleKey);
+            //发布按钮展示的时候，已经进行过限制，此处为了保险，使用服务端限制
+            if (draftentity == null) //如果没有数据或者数据已经删除，需要重新保存
+            {
+                _status = 2;
+                _msg = "请先保存数据";
+
+            }
+            else
+            {
+                try
+                {
+                    _PubComService._Pub_Article_DataService.InsertPub_ArticleWithPri_ArticleDraft(ArticleKey, IsPublish);
+                    _status = 1;
+                }
+                catch (Exception ex)
+                {
+                    _status = 4;
+                    _msg = ex.Message;
+                }
+
+            }
+            return new { status = _status, msg = _msg };
+
+        }
+
+
+      
 
 
 

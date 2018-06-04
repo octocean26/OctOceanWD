@@ -9,7 +9,7 @@ namespace WD.Management.WebSite.Models
 {
     public class VM_Article
     {
-        public string ArticleGuidKey { get; set; }
+        public string ArticleKey { get; set; }
         public string ArticleTitle { get; set; }
         public string ArticleCategory { get; set; }
         public string ContentText { get; set; }
