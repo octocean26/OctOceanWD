@@ -97,19 +97,19 @@ namespace WD.Management.WebSite.Controllers
 
         #region 文章编辑界面
 
-        [Route("Article/Edit/{ArticleKey}")]
+        [HttpGet("Article/Edit/{ArticleKey?}")]
         public IActionResult Edit(string ArticleKey)
         {
-            VM_Article article = new VM_Article()
-            {
-                ArticlePreviewUrl = _PubComService._OctOceanConfig.ArticlePreviewUrl + "/" + ArticleKey + "?t=p"
-            };
+            VM_Article article = new VM_Article();
 
             if (string.IsNullOrEmpty(ArticleKey))
             {
                 article.ArticleKey = "A_" + Guid.NewGuid().ToString().Replace("-", "");
                 article.IsPublish = false;
                 article.CanUploadOrPublish = false;
+                article.ArticleTag = string.Empty;
+                article.ArticleCategory = string.Empty;
+
             }
             else
             {
@@ -128,7 +128,7 @@ namespace WD.Management.WebSite.Controllers
                 article.IsPublish = _PubComService._Pub_Article_DataService.GetPub_Article_Entity(ArticleKey) != null;
                 article.CanUploadOrPublish = entity != null;
             }
-
+            article.ArticlePreviewUrl = _PubComService._OctOceanConfig.ArticlePreviewUrl + "/" + ArticleKey + "?t=p";
             article.Base_ArticleCategoryddl = new SelectList(_PubComService._Base_ArticleCategoryService.GetAllArticleCategory(), "ArticleCategoryCode", "ArticleCategoryName", ""); //默认选择空值
             article.Base_ArticleTagList = _PubComService._Base_ArticleTag_DataService.GetAllArticleTag();
             var allimagelist = _PubComService._Pri_ArticleImage_DataService.GetAllPri_ArticleImage(ArticleKey);
@@ -141,6 +141,8 @@ namespace WD.Management.WebSite.Controllers
             return View(article);
         }
 
+
+        [HttpPost]
         /// <summary>
         /// 定时自动保存文章到Draft和Temp中去
         /// </summary>
