@@ -12,11 +12,11 @@ using WD.Management.WebSite.Models;
 
 namespace WD.Management.WebSite.Controllers
 {
-    
+
     public class ArticleController : BaseController
     {
         readonly PubComService _PubComService = null;
-        
+
         public ArticleController(PubComService pubComService)
         {
             _PubComService = pubComService;
@@ -141,8 +141,78 @@ namespace WD.Management.WebSite.Controllers
             return View(article);
         }
 
-
         [HttpPost]
+        public IActionResult Submit([Bind("ArticleKey,ArticleTitle,ArticleCategory,ContentText,ArticleTag,ArticleDesc,AidStyle")]VM_Article article)
+        {
+            if (ModelState.IsValid)
+            {
+                if (article.ContentText != null)
+                {
+                    var _cont = article.ContentText.Replace("<p>", "").Replace("<br>", "").Replace("</p>", "").Replace("</br>", ""); //去掉自带的样式
+                    if (string.IsNullOrWhiteSpace(_cont))
+                    {
+                        article.ContentText = "";
+                    }
+                }
+
+                if (string.IsNullOrWhiteSpace(article.ArticleTitle) && string.IsNullOrWhiteSpace(article.ContentText) && string.IsNullOrWhiteSpace(article.ArticleDesc) && string.IsNullOrWhiteSpace(article.AidStyle))
+                {
+                    return RedirectToAction("Edit", new { ArticleKey = article.ArticleKey });
+                }
+
+
+                article.ContentText = _PubComService._Pri_ArticleImage_DataService.ReplaceImagesPlaceholder(article.ContentText, article.ArticleKey);
+
+                //将数据存入到Temp中去
+                var tempdal = _PubComService._Pri_ArticleDraft_Temp_DataService;
+                var draftdal = _PubComService._Pri_ArticleDraft_DataService;
+
+
+                //只要有新的内容，就存成草稿状态
+                int oi = tempdal.InsertPri_ArticleDraft_Temp(new Pri_ArticleDraft_Temp_Entity()
+                {
+                    ArticleKey = article.ArticleKey,
+                    ArticleTag = article.ArticleTag ?? "",
+                    ArticleDesc = article.ArticleDesc ?? "",
+                    AidStyle = article.AidStyle ?? "",
+                    ArticleCategory = article.ArticleCategory ?? "",
+                    ArticleTitle = article.ArticleTitle ?? "",
+                    ContentText = article.ContentText ?? "",
+                    UpdateTime = DateTime.Now
+
+                });
+
+
+                var submitData = new Pri_ArticleDraft_Entity()
+                {
+                    ArticleKey = article.ArticleKey,
+                    ArticleTag = article.ArticleTag ?? "",
+                    ArticleDesc = article.ArticleDesc ?? "",
+                    AidStyle = article.AidStyle ?? "",
+                    ArticleCategory = article.ArticleCategory ?? "",
+                    ArticleTitle = article.ArticleTitle ?? "",
+                    ContentText = article.ContentText ?? "",
+                    UpdateTime = DateTime.Now
+                };
+
+                var olddraft = draftdal.GetPri_ArticleDraft(article.ArticleKey);
+                if (olddraft == null)
+                {
+                    //插入操作
+                    draftdal.InsertPri_ArticleDraft(submitData);
+                }
+                else
+                {
+                    //必须在Draft中有这条记录修改才能生效，也就是说，只有点了保存按钮，产生了数据，才能够和temp数据进行关联，这样的话可以减少草稿内容（比如测试、或者打开页面没有做任何事情）的产生。
+                    draftdal.UpdatePri_ArticleDraft(submitData);
+                }
+
+            }
+
+            return RedirectToAction("Edit", new { ArticleKey = article.ArticleKey });
+        }
+
+        [HttpPost("Article/Save")]
         /// <summary>
         /// 定时自动保存文章到Draft和Temp中去
         /// </summary>
@@ -156,7 +226,6 @@ namespace WD.Management.WebSite.Controllers
         /// <returns></returns>
         public object Save(string ArticleKey, string ArticleTitle, string ArticleCategory, string ContentText, string ArticleTag, string ArticleDesc, string AidStyle)
         {
-            return "";
             int _status = 0;
             string _msg = string.Empty;
             int savecount = 0;
@@ -168,7 +237,6 @@ namespace WD.Management.WebSite.Controllers
                 {
                     ContentText = "";
                 }
-
             }
 
 
@@ -187,6 +255,7 @@ namespace WD.Management.WebSite.Controllers
 
                 try
                 {
+                    //只要有新的内容，就存成草稿状态
                     int oi = tempdal.InsertPri_ArticleDraft_Temp(new Pri_ArticleDraft_Temp_Entity()
                     {
                         ArticleKey = ArticleKey,
@@ -199,29 +268,31 @@ namespace WD.Management.WebSite.Controllers
                         UpdateTime = DateTime.Now
 
                     });
-                    //如果有改动的话，就进行同步修改，注意：仍然要保存旧的删除的状态
-                    if (oi > 0)
+
+
+                    if (oi > 0) //当有新的更新
                     {
-                        //查询一下之前旧的状态，是否删除
-                        //删除的状态只能在执行删除或者还原的时候进行改变，此处仍然取旧的状态
+
+                        var submitData = new Pri_ArticleDraft_Entity()
+                        {
+                            ArticleKey = ArticleKey,
+                            ArticleTag = ArticleTag ?? "",
+                            ArticleDesc = ArticleDesc ?? "",
+                            AidStyle = AidStyle ?? "",
+                            ArticleCategory = ArticleCategory ?? "",
+                            ArticleTitle = ArticleTitle ?? "",
+                            ContentText = ContentText ?? "",
+                            UpdateTime = DateTime.Now
+                        };
+
                         var olddraft = draftdal.GetPri_ArticleDraft(ArticleKey);
-                        //只有有旧的记录才更新
                         if (olddraft != null)
                         {
                             //必须在Draft中有这条记录修改才能生效，也就是说，只有点了保存按钮，产生了数据，才能够和temp数据进行关联，这样的话可以减少草稿内容（比如测试、或者打开页面没有做任何事情）的产生。
-                            draftdal.UpdatePri_ArticleDraft(new Pri_ArticleDraft_Entity()
-                            {
-                                ArticleKey = ArticleKey,
-                                ArticleTag = ArticleTag ?? "",
-                                ArticleDesc = ArticleDesc ?? "",
-                                AidStyle = AidStyle ?? "",
-                                ArticleCategory = ArticleCategory ?? "",
-                                ArticleTitle = ArticleTitle ?? "",
-                                ContentText = ContentText ?? "",
-                                UpdateTime = DateTime.Now
-                            });
+                            draftdal.UpdatePri_ArticleDraft(submitData);
                         }
                     }
+
 
                     //查询历史总次数
                     savecount = tempdal.GetSaveTempCountByArticleKey(ArticleKey);
@@ -242,6 +313,7 @@ namespace WD.Management.WebSite.Controllers
         #endregion
 
 
+        #region 格式化代码工具
         public IActionResult FormatCode()
         {
             VM_ArticleFormatCode _ArticleFormatCode = new VM_ArticleFormatCode();
@@ -254,13 +326,15 @@ namespace WD.Management.WebSite.Controllers
         {
             string ct = _ArticleFormatCode.ContentText;
             _ArticleFormatCode.ContentText = ct.Replace(_ArticleFormatCode.OldString, _ArticleFormatCode.NewString);
-           return View(_ArticleFormatCode);
+            return View(_ArticleFormatCode);
         }
+        #endregion
 
-        [Route("Article/HtmlEdit/{ArticleKey}")]
+
+        [HttpGet("Article/HtmlEdit/{ArticleKey}")]
         public IActionResult HtmlEdit(string ArticleKey)
         {
-            var entity=  _PubComService._Pri_ArticleDraft_DataService.GetPri_ArticleDraft(ArticleKey);
+            var entity = _PubComService._Pri_ArticleDraft_DataService.GetPri_ArticleDraft(ArticleKey);
             VM_ArticleHtmlEdit articleHtmlEdit = new VM_ArticleHtmlEdit()
             {
                 ArticleKey = entity == null ? "" : entity.ArticleKey,
@@ -272,11 +346,14 @@ namespace WD.Management.WebSite.Controllers
         public IActionResult HtmlEdit(VM_ArticleHtmlEdit articleHtmlEdit)
         {
             _PubComService._Pri_ArticleDraft_DataService.UpdatePri_ArticleDraftContentText(articleHtmlEdit.ArticleKey, articleHtmlEdit.ContentText);
+            ViewData["OK"] = true;
             return View(articleHtmlEdit);
 
         }
 
- 
+
+
+
 
         /// <summary>
         /// 删除文章，并彻底删除该文章所有的记录，否则更新draft和发布后的删除状态
@@ -343,7 +420,7 @@ namespace WD.Management.WebSite.Controllers
         }
 
 
-      
+
 
 
 

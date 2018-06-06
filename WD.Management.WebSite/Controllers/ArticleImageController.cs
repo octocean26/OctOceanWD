@@ -224,7 +224,6 @@ namespace WD.Management.WebSite.Controllers
         }
 
         [HttpPost("Save")]
-        [ValidateAntiForgeryToken]
         public ActionResult Save([Bind("ImgKey,ImgName,Height,Width")]Pri_ArticleImage_Entity img_Entity, string NewImgSrc)
         {
             var entity = imgdal.GetPri_ArticleImage_Entity(img_Entity.ImgKey);

@@ -37,7 +37,7 @@
         }
     </style>
 }
-<form method="post" class="layui-form layui-form-pane" onsubmit="return checkForm()">
+<form method="post" class="layui-form layui-form-pane" onsubmit="return checkForm()" asp-action="Submit">
 
     <div id="editpanel" style="padding:10px 0 0 0;">
         <div class="layui-container">
@@ -261,7 +261,7 @@
 
 
             checkForm();
-
+            console.log('nihao');
             $.post("/Article/Save", {
                 "ArticleKey": $('#hfArticleKey').val(),
                 "ArticleTitle": $('#txtArticleTitle').val(),
@@ -270,6 +270,7 @@
                 "ArticleTag": $('#hfArticleTag').val(),
                 "ArticleDesc": $('#txtArticleDesc').val(),
                 "AidStyle": $('#txtAidStyle').val()
+                 
             }, function (data) {
                // console.log(data);
                 $('#lblArticleKey').text(data.ak);
@@ -374,7 +375,7 @@
                 layer.open({
                     type: 2,
                     title: '文章HTML源码'
-                    , content: 'Article/HtmlEdit/@Model.ArticleKey'
+                    , content: '/Article/HtmlEdit/@Model.ArticleKey'
                     , area: ['1200px', '600px']
                     , resize: false//是否可以拉伸
                     , cancel: function (index, layero) {
@@ -480,9 +481,7 @@
 
         });
 
-        window.onbeforeunload = function () {
-            autoSubmitData();
-        }
+       
 
         var form = layui.form;
         //发布

@@ -65,16 +65,12 @@
         <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="detail" target="_blank" href="@ViewData["ArticlePreviewUrl"]/{{d.articleKey}}?t=p"><i class="layui-icon">&#xe63c;</i>查看</a>
         <a class="layui-btn layui-btn-xs layui-btn-edit" lay-event="edit" target="_blank" href="/Article/Edit/{{d.articleKey}}"><i class="layui-icon">&#xe642;</i>编辑</a>
         
-        
-        
         <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="pub"><i class="layui-icon">&#xe609;</i>发布</a>
-        
-        
-        
+         
         <a class="layui-btn layui-btn-xs layui-btn-del" lay-event="del"><i class="layui-icon">&#xe640;</i>删除</a>
 
 
-        {{# if(d.delStatus==1){ }}
+        @*{{# if(d.delStatus==1){ }}
 
         <a class="layui-btn layui-btn-xs layui-btn-green" lay-event="edit" target="_blank" href="/Article/ArticleEdit/{{d.articleKey}}"><i class="layui-icon">&#x1005;</i>还原</a>
 
@@ -86,7 +82,7 @@
 
 
 
-        {{# }}}
+        {{# }}}*@
     </script>
 
     @*自定义列模板*@
@@ -221,7 +217,7 @@
                 layer.confirm(cfmsg, { icon: 3, title: '提示' }, function (index) {
                     
                     //向服务端发送删除指令
-                    $.post('/ArticleDraft/Delete', {
+                    $.post('/Article/Delete', {
                         "ArticleKey": data.articleKey
 
                     }, function (rd) {
